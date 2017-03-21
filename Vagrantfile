@@ -22,21 +22,10 @@ Vagrant.configure("2") do |config|
     rsync__args: ["-avtzL"],
     rsync__exclude: [".git/"]
 
-  # Download wandbox-builder
-  config.vm.provision :shell, privileged:true, inline: <<-SHELL
-    apt-get update
-    apt-get install -y git
-    if ! [[ -d /root/src/wandbox-builder ]]; then
-      git clone --depth 1 \
-        https://github.com/melpon/wandbox-builder.git \
-        /root/src/wandbox-builder
-    fi
-    cp /vagrant/docker-exec.sh /root/src/wandbox-builder/build/docker-exec.sh
-    chmod +x /root/src/wandbox-builder/build/docker-exec.sh
-  SHELL
-
-  # Install wandbox into wandbox-builder/wandbox
   config.vm.provision :docker
-  config.vm.provision :shell, privileged:true, path:"./install_wandbox.sh"
-  config.vm.provision :shell, privileged:true, path:"./start_wandbox.sh"
+  config.vm.provision :shell, inline: <<-SHELL
+    /bin/bash /vagrant/prelude.sh
+    /bin/bash /vagrant/install_wandbox.sh
+    /bin/bash /vagrant/start_wandbox.sh
+  SHELL
 end
