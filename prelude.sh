@@ -15,4 +15,5 @@ if ! [[ -d /root/src/wandbox-builder ]]; then
 fi
 
 cp /vagrant/docker-exec.sh /root/src/wandbox-builder/build/docker-exec.sh
+cp /vagrant/compilers.py   /root/src/wandbox-builder/cattleshed-conf/compilers.py
 chmod +x /root/src/wandbox-builder/build/docker-exec.sh
