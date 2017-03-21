@@ -4,10 +4,10 @@ set -e
 set +x
 
 # Disable SELinux
-setenforce 0
+which setenforce > /dev/null && setenforce 0 || true
 
 # Install dependencies
-dnf install -y git
+sudo apt-get install -y git
 
 # Clone builder script
 [[ -d /root/src/wandbox-builder ]] || {
@@ -23,8 +23,6 @@ chmod +x ./build/docker-exec.sh
 
 # Build docker images
 # cd /root/src/wandbox-builder/build
-# ./docker-build.sh cattleshed
-# ./docker-build.sh kennel
 # ./docker-build.sh ldc-head
 # ./docker-build.sh go-head
 
@@ -32,7 +30,8 @@ chmod +x ./build/docker-exec.sh
 cd /root/src/wandbox-builder/build
 [[ -f ../wandbox/cattleshed/bin/cattleshed ]] || ./docker-exec.sh cattleshed ./install.sh
 [[ -d ../wandbox/kennel/bin ]] || ./docker-exec.sh kennel ./install.sh
-[[ -f ../wandbox/go-head/bin ]] || ./docker-exec.sh go-head ./install.sh
+[[ -d ../wandbox/go-head/bin ]] || ./docker-exec.sh go-head ./install.sh
+[[ -d ../wandbox/ocaml-head/bin ]] || ./docker-exec.sh ocaml-head ./install.sh
 
 # Update cattleshed.conf
 cd /root/src/wandbox-builder/cattleshed-conf
@@ -41,7 +40,6 @@ mkdir -p ../wandbox/cattleshed-conf
 
 # Start service
 cd /root/src/wandbox-builder/test
-./docker-build.sh test-server
 docker rm -f wandbox || true
 docker run -d \
   --name wandbox \
