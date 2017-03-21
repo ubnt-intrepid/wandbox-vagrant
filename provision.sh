@@ -22,17 +22,17 @@ cp /vagrant/docker-exec.sh ./build/docker-exec.sh
 chmod +x ./build/docker-exec.sh
 
 # Build docker images
-cd /root/src/wandbox-builder/build
-./docker-build.sh cattleshed
-./docker-build.sh kennel
-./docker-build.sh ldc-head
-./docker-build.sh go-head
+# cd /root/src/wandbox-builder/build
+# ./docker-build.sh cattleshed
+# ./docker-build.sh kennel
+# ./docker-build.sh ldc-head
+# ./docker-build.sh go-head
 
 # Install compilers & Wandbox binaries
-./docker-exec.sh cattleshed ./install.sh
-./docker-exec.sh kennel ./install.sh
-./docker-exec.sh ldc-head ./install.sh
-./docker-exec.sh go-head ./install.sh
+cd /root/src/wandbox-builder/build
+[[ -f ../wandbox/cattleshed/bin/cattleshed ]] || ./docker-exec.sh cattleshed ./install.sh
+[[ -d ../wandbox/kennel/bin ]] || ./docker-exec.sh kennel ./install.sh
+[[ -f ../wandbox/go-head/bin ]] || ./docker-exec.sh go-head ./install.sh
 
 # Update cattleshed.conf
 cd /root/src/wandbox-builder/cattleshed-conf
@@ -42,9 +42,11 @@ mkdir -p ../wandbox/cattleshed-conf
 # Start service
 cd /root/src/wandbox-builder/test
 ./docker-build.sh test-server
+docker rm -f wandbox || true
 docker run -d \
   --name wandbox \
   --privileged=true \
+  -p "3500:3500" \
   -v /vagrant:/var/work \
   -v /root/src/wandbox-builder/wandbox:/opt/wandbox \
   "melpon/wandbox:test-server" \

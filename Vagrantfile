@@ -11,6 +11,7 @@ Vagrant.configure("2") do |config|
     vb.memory = 4096
     vb.cpus = 2
   end
+  config.vm.network :forwarded_port, host:"3500", guest:"3500"
   config.vm.synced_folder ".", "/vagrant",
     type: "rsync",
     rsync__args: ["-avtzL", "--delete"],
