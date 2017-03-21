@@ -1,11 +1,8 @@
-# wandbox-vagrant
-
-Vagrantfile for provisioning Wandbox service
+# `Vagrantfile` for provisioning Wandbox service
 
 ## Usage
-
 ```sh
-$ vagrant up --provision
+$ vagrant up [--provision]
 $ curl http://127.0.0.1:3500/api/list.json
 ```
 
