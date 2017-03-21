@@ -7,5 +7,7 @@ $ curl http://127.0.0.1:3500/api/list.json
 ```
 
 ## TODO
-- [ ] Remove uninstalled compilers from `compilers.default`
+- [ ] Modify `compilers.py`
+  - Choose installed compilers from config file
+  - Remove uninstalled compilers from `compilers.default`
 - [ ] Write Dockerfile
