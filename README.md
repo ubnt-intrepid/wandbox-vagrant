@@ -13,5 +13,5 @@
 
 3. Update cattleshed-conf/compilers.default and then restart the service
    ```sh
-   $ vagrant provision
+   $ vagrant ssh -c "sudo env WANDBOX_BUILDER=/var/src/wandbox-builder /vagrant/provision/start_wandbox.sh"
    ```
