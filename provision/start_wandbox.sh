@@ -14,4 +14,5 @@ docker run -d \
   -v /vagrant/work:/var/work \
   -v $WANDBOX_BUILDER/wandbox:/opt/wandbox \
   -p "3500:3500" \
-  "wandbox"
+  "wandbox" \
+  usr/bin/supervisord -c /var/work/supervisord.conf

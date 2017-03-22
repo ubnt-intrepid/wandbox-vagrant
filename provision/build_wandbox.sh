@@ -5,7 +5,7 @@ set +x
 
 declare -a targets=(
   "go-head"
-  "ocaml-head"
+  # "ocaml-head"
   "pony-head"
 )
 

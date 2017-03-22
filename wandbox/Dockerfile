@@ -27,5 +27,4 @@ RUN apt-get update && \
     ln -s libgmp.so /usr/lib/x86_64-linux-gnu/libgmp.so.3 && \
     mkdir /usr/share/perl || true
 
-COPY supervisord.conf /etc/supervisord.conf
-CMD [ "/usr/bin/supervisord" ]
+CMD [ "/bin/bash" ]
