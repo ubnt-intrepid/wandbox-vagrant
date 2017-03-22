@@ -3,9 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "boxcutter/ubuntu1604"
-
   config.vm.box_check_update = false
-
   if Vagrant.has_plugin?("vagrant-vbguest") then
     config.vbguest.auto_update = false
   end
@@ -25,8 +23,24 @@ Vagrant.configure("2") do |config|
   config.vm.provision :docker
   config.vm.provision :shell, inline: <<-SHELL
     export WANDBOX_BUILDER=/var/src/wandbox-builder
-    /bin/bash /vagrant/provision/prepare_src.sh
-    /bin/bash /vagrant/provision/build_wandbox.sh
+
+    # Disable SELinux
+    which setenforce > /dev/null && setenforce 0 || true
+
+    # Download wandbox-builder
+    if ! which git > /dev/null; then
+      apt-get update
+      apt-get install -y git
+    fi
+    rm -rf $WANDBOX_BUILDER
+    git clone --depth 1 https://github.com/melpon/wandbox-builder.git "${WANDBOX_BUILDER}"
+
+    # Build compilers
+    [[ -d "${WANDBOX_BUILDER}/wandbox" ]] || {
+      /bin/bash /vagrant/provision/build_compilers.sh
+    }
+
+    # Start Wandbox service
     /bin/bash /vagrant/provision/start_wandbox.sh
   SHELL
 end

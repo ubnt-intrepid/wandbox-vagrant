@@ -4,26 +4,21 @@
 
 #### 1. Update compiler list:
 ```sh
-# provision/build_wandbox.sh
+# provision/build_compilers.sh
+main() {
+  # ...
 
-declare -a targets=(
-  "clang-head"
-  "ocaml-head"
-  "pony-head"
-  "gcc-head"
-)
+  # Install compilers
+  do_install clang 3.7.1
+  do_install clang-head
+
+  # Install Boost
+  do_install boost-head 1.61.0 clang-head
+  do_install boost      1.61.0 clang      3.7.1
 ```
-Currently, only HEADs are supported.
 
 #### 2. Start VM
 ```sh
 $ vagrant up [--provision]
 $ curl http://127.0.0.1:3500/api/list.json
 ```
-
-## TODO
-- [ ] Modify `compilers.py`
-  - Choose installed compilers from config file
-  - Remove uninstalled compilers from `compilers.default`
-- [x] ~~Write Dockerfile~~
-  - ~~Use `supervisord`~~
