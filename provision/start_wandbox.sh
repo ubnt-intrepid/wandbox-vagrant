@@ -11,7 +11,7 @@ docker run -d \
   --name wandbox \
   --restart=always \
   --privileged=true \
-  -v /vagrant:/var/work \
+  -v /vagrant/work:/var/work \
   -v $WANDBOX_BUILDER/wandbox:/opt/wandbox \
   -p "3500:3500" \
   "wandbox"

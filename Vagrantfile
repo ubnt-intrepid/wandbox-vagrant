@@ -25,8 +25,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision :docker
   config.vm.provision :shell, inline: <<-SHELL
     export WANDBOX_BUILDER=/var/src/wandbox-builder
-    /bin/bash /vagrant/prepare_src.sh
-    /bin/bash /vagrant/build_wandbox.sh
-    /bin/bash /vagrant/start_wandbox.sh
+    /bin/bash /vagrant/provision/prepare_src.sh
+    /bin/bash /vagrant/provision/build_wandbox.sh
+    /bin/bash /vagrant/provision/start_wandbox.sh
   SHELL
 end
