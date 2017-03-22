@@ -15,7 +15,7 @@ do_install() {
 
   local suffix="$1"
   local target="$2"
-  
+
   if [[ -d "${WANDBOX_BUILDER}/wandbox/$suffix" ]]; then
     return
   fi
@@ -23,7 +23,7 @@ do_install() {
   echo >&2 "Installing target '$target'..."
 
   # Pull image for installation, or build if not exists.
-  docker pull "melpon/wandbox:$target"
+  docker pull "melpon/wandbox:$target" || true
   if [[ -z "$(docker images -q melpon/wandbox:$target)" ]]; then
     (cd "$WANDBOX_BUILDER/build" && ./docker-build.sh "$target")
   fi

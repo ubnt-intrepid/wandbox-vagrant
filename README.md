@@ -8,7 +8,7 @@
 
 2. Install compilers
    ```sh
-   $ vagrant ssh -c "sudo /vagrant/provision/do_install.sh clang-head"
+   $ vagrant ssh -c "sudo env WANDBOX_BUILDER=/var/src/wandbox-builder /vagrant/provision/do_install.sh clang-head"
    ```
 
 3. Update cattleshed-conf/compilers.default and then restart the service
