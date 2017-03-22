@@ -9,6 +9,7 @@ import os
 import glob
 from collections import defaultdict
 
+IGNORE_NONEXISTENCE = True
 
 def merge(*args):
     result = {}
@@ -43,7 +44,11 @@ def get_boost_versions():
 
 # [(<boost-version>, <compiler>, <compiler-version>)]
 def get_boost_versions_with_head():
-    return get_boost_versions() + [(bv,) + tuple(c.split('-')) for bv, c in get_boost_head_versions()]
+    global IGNORE_NONEXISTENCE
+    versions = get_boost_versions() + [(bv,) + tuple(c.split('-')) for bv, c in get_boost_head_versions()]
+    if IGNORE_NONEXISTENCE == True:
+        versions = [version for version in versions if os.path.isdir(os.path.join(data_path(), "boost-{0}/{1}-{2}".format(*version)))]
+    return versions
 
 
 def read_versions(name):
@@ -52,9 +57,12 @@ def read_versions(name):
 
 
 def get_generic_versions(name, with_head):
-    lines = read_versions(name)
-    head = ['head'] if with_head else []
-    return head + lines
+    global IGNORE_NONEXISTENCE
+    versions = read_versions(name)
+    versions = versions + ['head'] if with_head else versions
+    if IGNORE_NONEXISTENCE == True:
+        versions = [version for version in versions if os.path.isdir(os.path.join(data_path(), "{0}-{1}".format(name, version)))]
+    return versions
 
 
 # foo-1.23.4
@@ -366,27 +374,20 @@ class Switches(object):
                 'flags': ['-Mdelphi'],
                 'display-name': 'Delphi 7 mode',
             },
-       }
-
-    def make_ocaml(self):
-        return {
-           'ocaml-core': {
+            'ocaml-core': {
                 'flags': ['-package', 'core'],
                 'display-name': 'Jane Street Core',
             },
         }
 
-
     def make(self):
         return merge(
-            # self.make_default(),
-            # self.make_pedantic(),
-            # self.make_boost(),
-            # self.make_boost_header(),
-            # self.make_c(),
-            # self.make_cxx(),
-            self.make_ocaml(),
-            )
+            self.make_default(),
+            self.make_pedantic(),
+            self.make_boost(),
+            self.make_boost_header(),
+            self.make_c(),
+            self.make_cxx())
 
 class Compilers(object):
     def make_gcc_c(self):
@@ -1263,6 +1264,9 @@ class Compilers(object):
 
     def make_scala(self):
         scala_vers = read_versions('scala-head') + get_generic_versions('scala', with_head=False)
+        if IGNORE_NONEXISTENCE == True:
+            scala_vers = [ver for ver in scala_vers if os.path.isdir(os.path.join(data_path(), "scala-{0}".format(ver)))]
+
         compilers = []
         for cv in scala_vers:
             if cv[-2:] == '.x':
@@ -1610,22 +1614,23 @@ class Compilers(object):
         display_name = 'lazyk'
         version_command = ['/bin/echo', '']
 
-        compilers.append({
-            'name': 'lazyk',
-            'displayable': True,
-            'language': 'Lazy K',
-            'output-file': 'prog.lazy',
-            'compiler-option-raw': False,
-            'compile-command': ['/bin/true'],
-            'version-command': version_command,
-            'switches': [],
-            'initial-checked': [],
-            'display-name': display_name,
-            'display-compile-command': 'lazyk prog.lazy',
-            'run-command': ['/opt/wandbox/lazyk/bin/lazyk', 'prog.lazy'],
-            'runtime-option-raw': True,
-            'jail-name': 'melpon2-default',
-        })
+        if IGNORE_NONEXISTENCE != True or os.path.isdir(os.path.join(data_path(), "lazyk")):
+            compilers.append({
+                'name': 'lazyk',
+                'displayable': True,
+                'language': 'Lazy K',
+                'output-file': 'prog.lazy',
+                'compiler-option-raw': False,
+                'compile-command': ['/bin/true'],
+                'version-command': version_command,
+                'switches': [],
+                'initial-checked': [],
+                'display-name': display_name,
+                'display-compile-command': 'lazyk prog.lazy',
+                'run-command': ['/opt/wandbox/lazyk/bin/lazyk', 'prog.lazy'],
+                'runtime-option-raw': True,
+                'jail-name': 'melpon2-default',
+            })
         return compilers
 
     def make_vim(self):
@@ -1829,46 +1834,45 @@ class Compilers(object):
 
     def make(self):
         return (
-            # self.make_gcc_c() +
-            # self.make_gcc_pp() +
-            # self.make_gcc() +
-            # self.make_clang_c() +
-            # self.make_clang_pp() +
-            # self.make_clang() +
-            # self.make_mono() +
-            # self.make_rill() +
-            # self.make_erlang() +
-            # self.make_elixir() +
-            # self.make_ghc() +
-            # self.make_dmd() +
-            # self.make_gdc() +
-            # self.make_ldc() +
-            # self.make_openjdk() +
-            # self.make_rust() +
-            # self.make_cpython() +
-            # self.make_ruby() +
-            # self.make_mruby() +
-            # self.make_scala() +
-            # self.make_groovy() +
-            # self.make_nodejs() +
-            # self.make_coffeescript() +
-            # self.make_spidermonkey() +
-            # self.make_swift() +
-            # self.make_perl() +
-            # self.make_php() +
-            # self.make_lua() +
-            # self.make_sqlite() +
-            # self.make_fpc() +
-            # self.make_clisp() +
-            # self.make_lazyk() +
-            # self.make_vim() +
-            # self.make_pypy() +
+            self.make_gcc_c() +
+            self.make_gcc_pp() +
+            self.make_gcc() +
+            self.make_clang_c() +
+            self.make_clang_pp() +
+            self.make_clang() +
+            self.make_mono() +
+            self.make_rill() +
+            self.make_erlang() +
+            self.make_elixir() +
+            self.make_ghc() +
+            self.make_dmd() +
+            self.make_gdc() +
+            self.make_ldc() +
+            self.make_openjdk() +
+            self.make_rust() +
+            self.make_cpython() +
+            self.make_ruby() +
+            self.make_mruby() +
+            self.make_scala() +
+            self.make_groovy() +
+            self.make_nodejs() +
+            self.make_coffeescript() +
+            self.make_spidermonkey() +
+            self.make_swift() +
+            self.make_perl() +
+            self.make_php() +
+            self.make_lua() +
+            self.make_sqlite() +
+            self.make_fpc() +
+            self.make_clisp() +
+            self.make_lazyk() +
+            self.make_vim() +
+            self.make_pypy() +
             self.make_ocaml() +
             self.make_go() +
-            # self.make_sbcl() +
-            # self.make_bash() +
-            self.make_pony() +
-            []
+            self.make_sbcl() +
+            self.make_bash() +
+            self.make_pony()
         )
 
 def make_config():
