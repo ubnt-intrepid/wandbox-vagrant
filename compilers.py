@@ -366,20 +366,26 @@ class Switches(object):
                 'flags': ['-Mdelphi'],
                 'display-name': 'Delphi 7 mode',
             },
-            'ocaml-core': {
+       }
+
+    def make_ocaml(self):
+        return {
+           'ocaml-core': {
                 'flags': ['-package', 'core'],
                 'display-name': 'Jane Street Core',
             },
         }
 
+
     def make(self):
         return merge(
-            self.make_default(),
+            # self.make_default(),
             # self.make_pedantic(),
             # self.make_boost(),
             # self.make_boost_header(),
             # self.make_c(),
             # self.make_cxx(),
+            self.make_ocaml(),
             )
 
 class Compilers(object):
@@ -1861,7 +1867,7 @@ class Compilers(object):
             self.make_go() +
             # self.make_sbcl() +
             # self.make_bash() +
-            # self.make_pony() +
+            self.make_pony() +
             []
         )
 
