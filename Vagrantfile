@@ -23,9 +23,12 @@ Vagrant.configure("2") do |config|
   config.vm.provision :docker
   config.vm.provision :shell, inline: <<-SHELL
     export WANDBOX_BUILDER=/var/src/wandbox-builder
+    export WANDBOX_PREFIX=/opt/wandbox
 
     # Disable SELinux
     which setenforce > /dev/null && setenforce 0 || true
+
+    mkdir -p "$WANDBOX_PREFIX"
 
     # Download wandbox-builder
     if ! which git > /dev/null; then
@@ -35,10 +38,10 @@ Vagrant.configure("2") do |config|
     rm -rf $WANDBOX_BUILDER
     git clone --depth 1 https://github.com/melpon/wandbox-builder.git "${WANDBOX_BUILDER}"
 
-    # Build compilers
-    [[ -d "${WANDBOX_BUILDER}/wandbox" ]] || {
-      /bin/bash /vagrant/provision/build_compilers.sh
-    }
+    ln -s "$WANDBOX_PREFIX" "$WANDBOX_BUILDER/wandbox"
+
+    # Install binaries
+    /bin/bash /vagrant/provision/install_all.sh
 
     # Start Wandbox service
     /bin/bash /vagrant/provision/start_wandbox.sh
