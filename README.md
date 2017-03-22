@@ -4,32 +4,15 @@
 * Update compiler list:
   ```sh
   // provision/build_wandbox.sh
-  ...
+  
   declare -a targets=(
-    "go-head"
-    "ocaml-head"
+    "clang-head"
+    "ocaml-head"
     "pony-head"
     "gcc-head"
   )
   ```
   Currently, only HEADs are supported.
-
-* Fix compilers.py:
-  ```py
-  class Switches(object):
-      ...
-      def make(self):
-          return merge(
-              ...
-              self.make_cxx(),
-          )
-  ...
-  class Compilers(object):
-      ...
-      def make(self):
-        ...
-  ```
-
 * Start VM
   ```sh
   $ vagrant up [--provision]
@@ -40,5 +23,5 @@
 - [ ] Modify `compilers.py`
   - Choose installed compilers from config file
   - Remove uninstalled compilers from `compilers.default`
-- [x] Write Dockerfile
-  - Use `supervisord`
+- [x] ~~Write Dockerfile~~
+  - ~~Use `supervisord`~~
