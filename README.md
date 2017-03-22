@@ -10,4 +10,5 @@ $ curl http://127.0.0.1:3500/api/list.json
 - [ ] Modify `compilers.py`
   - Choose installed compilers from config file
   - Remove uninstalled compilers from `compilers.default`
-- [ ] Write Dockerfile
+- [x] Write Dockerfile
+  - Use `supervisord`
